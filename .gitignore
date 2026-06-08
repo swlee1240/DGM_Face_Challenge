@@ -1,0 +1,10 @@
+# Model weights are submitted separately, not stored in this repo (GitHub 100MB limit)
+checkpoint/*.pkl
+
+# Generated outputs
+out/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
