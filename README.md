@@ -112,7 +112,14 @@ python reproduce.py --config prune085 --real-dir /path/to/celebvhq_256
 `psi10` / `psi20` are deterministic per seed: NVlabs `generate.py` sets
 `z = np.random.RandomState(seed).randn(1, 512)` per image with
 `--noise-mode=const`, so seeds 0–999 reproduce exactly (minor GPU/driver float
-differences can change PNG bytes without changing the image). `prune085` uses
-fixed seeds for the pool and a fixed projection/k-means seed (`0`), but its
-selection depends on Inception features, so a different GPU/driver can shift a
-few borderline picks.
+differences can change PNG bytes without changing the image).
+
+`prune085` generates its 5,000-image pool the same deterministic way, but the
+selection step extracts clean-fid Inception features and runs k-means, which
+depend on the environment (torch / clean-fid / scikit-learn versions, GPU vs
+CPU). Across environments the *exact* 1,000 selected images can differ
+substantially — selecting under a different torch than the original, we measured
+~38% image overlap — yet the **metric reproduces closely**: that re-run scored
+TopPR-F1 0.912 vs the original 0.935, still far above the untruncated set
+(0.841). So `prune085` reproduces the TopPR *result*, not a bit-identical image
+set.
