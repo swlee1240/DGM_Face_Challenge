@@ -4,6 +4,10 @@ checkpoint/*.pkl
 # Generated outputs
 out/
 
+# prune085 reference feature cache (built locally, hundreds of MB)
+ref/
+*.npz
+
 # Python
 __pycache__/
 *.pyc
