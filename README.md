@@ -43,7 +43,7 @@ exactly why the per-metric mapping above exists.
 ```
 submission_repo/
 ├── README.md           ← this file
-├── reproduce.py        ← build submission.zip for a chosen --config
+├── reproduce.py        ← build the submission folder for a chosen --config
 ├── requirements.txt    ← all deps (generation + selection), one env
 ├── checkpoint/         ← place fdloss-320.pkl here (bundled separately; see below)
 ├── ref/                ← place celebvhq256_cleanfeats.npz here (prune085 only)
@@ -87,8 +87,10 @@ the cache from the public images instead.
 
 ## Reproduce
 
-Each run writes `out/submission.zip` (1000 PNGs `0000.png`–`0999.png` at the zip
-root). A few minutes on an RTX 3090.
+Each run writes a folder `out/submission_<config>/` of 1000 PNGs named
+`0000.png`–`0999.png` (one folder per config, so they don't overwrite). A few
+minutes on an RTX 3090. Submit the folder directly, or zip it yourself if your
+upload channel needs a single file.
 
 ```bash
 python reproduce.py                    # psi10     (FID/KID, default)

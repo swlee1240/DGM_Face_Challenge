@@ -14,7 +14,8 @@ prune085 additionally keeps the 1000 samples closest to the real-data support,
 so it needs the real CelebV-HQ images once (via --real-dir) to build a feature
 cache; psi10 / psi20 need nothing extra. All deps are in requirements.txt.
 
-Each run writes out/submission.zip (1000 PNGs 0000.png-0999.png at the zip root).
+Each run writes out/submission_<config>/ as a folder of 1000 PNGs named
+0000.png-0999.png (no zip).
 
 Examples:
   python reproduce.py                                    # psi10
@@ -22,9 +23,9 @@ Examples:
   python reproduce.py --config prune085 --real-dir /path/to/celebvhq_256
 """
 import argparse
+import shutil
 import subprocess
 import sys
-import zipfile
 from pathlib import Path
 
 import numpy as np
@@ -142,13 +143,16 @@ def select_prune(pool_dir, ref_feats, p, device, num_workers):
     return [files[i] for i in idxs]
 
 
-# ---------------------------------------------------------------------- zip
-def build_zip(img_paths, zip_path):
-    assert len(img_paths) == 1000, f"{zip_path.name}: {len(img_paths)} != 1000"
-    with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_STORED) as zf:
-        for i, pth in enumerate(img_paths):
-            zf.write(pth, arcname=f"{i:04d}.png")
-    print(f"[zip] {zip_path.name}  ({zip_path.stat().st_size/1e6:.1f} MB, 1000 imgs)")
+# ------------------------------------------------------------------- output
+def write_submission(img_paths, dst_dir):
+    """Write the 1000 chosen images to a folder as 0000.png..0999.png."""
+    assert len(img_paths) == 1000, f"{dst_dir.name}: {len(img_paths)} != 1000"
+    if dst_dir.exists():
+        shutil.rmtree(dst_dir)
+    dst_dir.mkdir(parents=True)
+    for i, pth in enumerate(img_paths):
+        shutil.copy2(pth, dst_dir / f"{i:04d}.png")
+    print(f"[out] {dst_dir}  (1000 PNGs: 0000.png..0999.png)")
 
 
 def main():
@@ -186,9 +190,9 @@ def main():
         chosen = select_prune(gen_dir, ref, cfg["select"],
                               args.device, args.num_workers)
 
-    build_zip(chosen, out / "submission.zip")
-    print(f"\n[done] config={args.config} (target: {cfg['metric']}) -> "
-          f"{out / 'submission.zip'}")
+    sub_dir = out / f"submission_{args.config}"
+    write_submission(chosen, sub_dir)
+    print(f"\n[done] config={args.config} (target: {cfg['metric']}) -> {sub_dir}/")
 
 
 if __name__ == "__main__":
