@@ -33,10 +33,11 @@ Local scores (1000 generated vs CelebV-HQ, our eval pipeline):
 Each config wins its target metric but gives up the others — that trade-off is
 exactly why the per-metric mapping above exists.
 
-> **Note (relative to the report).** Our submitted report focuses on the
-> balanced `psi10` set. The per-metric configs `psi20` (IS) and `prune085`
-> (TopPR) were added to this package afterwards so that every per-metric-best
-> image set is reproducible here; they are not described in the submitted report.
+> **Note (relative to the report).** Our submitted report describes all three
+> configs: `psi10` is the submission, while `psi20` (IS-max) and `prune085`
+> (TopPR-max) appear in the metric trade-off analysis (Table 1). The report
+> states that the shared code reproduces only `psi10`; this package has since
+> been extended so that `psi20` and `prune085` are reproducible here as well.
 
 ## Folder contents
 
